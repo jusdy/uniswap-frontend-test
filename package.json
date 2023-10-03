@@ -1,0 +1,40 @@
+{
+  "name": "uniswap-frontend-test",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "@rainbow-me/rainbowkit": "0.12.14",
+    "@uniswap/v3-periphery": "^1.4.4",
+    "apollo-boost": "^0.4.9",
+    "ethers": "v5",
+    "graphql": "^16.8.1",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-hot-toast": "^2.4.1",
+    "wagmi": "0.12.16"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "autoprefixer": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "eslint-config-prettier": "^9.0.0",
+    "husky": "^8.0.3",
+    "postcss": "latest",
+    "prettier": "^3.0.3",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "cSpell.words": [
+    "headlessui",
+    "heroicons",
+    "hexlify",
+    "inmemory",
+    "nocase",
+    "Numberish",
+    "rainbowkit",
+    "tailwindcss",
+    "wagmi"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
