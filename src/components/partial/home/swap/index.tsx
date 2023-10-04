@@ -17,15 +17,21 @@ const Swap = () => {
   const [toAmount, setToAmount] = useState<number>(0)
   const [waiting, setWaiting] = useState<boolean>(false)
 
-  const fromAmountBigNumber = useMemo(
-    () => utils.parseUnits(fromAmount.toString(), from?.decimals ?? 0),
-    [fromAmount, from]
-  )
+  const fromAmountBigNumber = useMemo(() => {
+    try {
+      return utils.parseUnits(fromAmount.toString(), from?.decimals ?? 18)
+    } catch (err) {
+      return undefined
+    }
+  }, [fromAmount, from])
 
-  const toAmountBigNumber = useMemo(
-    () => utils.parseUnits(toAmount.toString(), to?.decimals ?? 0),
-    [toAmount, to]
-  )
+  const toAmountBigNumber = useMemo(() => {
+    try {
+      return utils.parseUnits(toAmount.toString(), to?.decimals ?? 18)
+    } catch (err) {
+      return undefined
+    }
+  }, [toAmount, to])
 
   const { balance, allowance, approve, swapInputSingle } = useSwap(
     from?.id,
@@ -95,7 +101,7 @@ const Swap = () => {
   }, [selectedPool, from?.symbol, swapInputSingle, to?.symbol])
 
   const handleApprove = useCallback(async () => {
-    if (!allowance) {
+    if (!allowance || !fromAmountBigNumber) {
       return
     }
 
@@ -133,7 +139,7 @@ const Swap = () => {
   useEffect(() => {
     if (expectedToAmount) {
       const formatted = +utils.formatUnits(expectedToAmount, to?.decimals ?? 18)
-      if (Math.abs(formatted - toAmount) > 0.0001) {
+      if (Math.abs(formatted - toAmount) > 0.001) {
         setToAmount(+utils.formatUnits(expectedToAmount, to?.decimals ?? 18))
       }
     }
@@ -146,7 +152,7 @@ const Swap = () => {
         expectedFromAmount,
         from?.decimals ?? 18
       )
-      if (Math.abs(formatted - fromAmount) > 0.0001) {
+      if (Math.abs(formatted - fromAmount) > 0.001) {
         setFromAmount(
           +utils.formatUnits(expectedFromAmount, from?.decimals ?? 18)
         )
@@ -156,62 +162,74 @@ const Swap = () => {
   }, [expectedFromAmount, from?.decimals])
 
   return (
-    <div className="max-w-md min-w-[350px] mx-auto rounded-md py-8 px-4 bg-black backdrop-blur-md bg-opacity-20">
-      <div className="w-full flex flex-col gap-4">
-        <TokenSelect label="from" onChange={setFrom} />
-        <div className="w-full grid grid-cols-4 items-center overflow-visible gap-4">
-          <div></div>
-          <p className="col-span-3 text-sm text-gray-100">{`Available balance is ${
-            formattedBalance?.toFixed(6) ?? '-'
-          }`}</p>
-        </div>
-        <TokenSelect label="to" onChange={setTo} />
-        <div className="w-full grid grid-cols-4 items-center overflow-visible gap-4">
-          <label className="text-white uppercase text-right">Input</label>
-          <div className="col-span-3 w-full">
-            <input
-              type="number"
-              value={fromAmount}
-              onChange={(e) => setFromAmount(+e.target.value)}
-              className="w-full rounded-lg border-none py-2 px-3 text-sm leading-5 text-gray-900 focus:ring-0"
-            />
+    <div className="flex justify-center items-center lg:h-[calc(100vh-320px)]">
+      <div className="max-w-md min-w-[350px] mx-auto rounded-md py-8 px-4 bg-black backdrop-blur-md bg-opacity-20">
+        <div className="w-full flex flex-col gap-4">
+          <TokenSelect label="from" onChange={setFrom} />
+          <div className="w-full grid grid-cols-4 items-center overflow-visible gap-4">
+            <div></div>
+            <p className="col-span-3 text-sm text-gray-100">{`Available balance is ${
+              formattedBalance?.toFixed(6) ?? '-'
+            }`}</p>
           </div>
-        </div>
-        <div className="w-full grid grid-cols-4 items-center overflow-visible gap-4">
-          <label className="text-white uppercase text-right">Output</label>
-          <div className="col-span-3 w-full">
-            <input
-              type="number"
-              value={toAmount}
-              onChange={(e) => setToAmount(+e.target.value)}
-              className="w-full rounded-lg border-none py-2 px-3 text-sm leading-5 text-gray-900 focus:ring-0"
-            />
+          <TokenSelect label="to" onChange={setTo} />
+          <div className="w-full grid grid-cols-4 items-center overflow-visible gap-4">
+            <label className="text-white uppercase text-right">Input</label>
+            <div className="col-span-3 w-full relative">
+              <input
+                type="number"
+                value={fromAmount}
+                onChange={(e) => setFromAmount(+e.target.value)}
+                className="w-full rounded-lg border-none py-2 px-3 text-sm leading-5 text-gray-900 focus:ring-0"
+              />
+              <button
+                type="button"
+                disabled={!formattedBalance}
+                onClick={() => setFromAmount(formattedBalance ?? 0)}
+                className="absolute top-1/2 -translate-y-1/2 right-1 py-1 px-3 font-bold text-white text-xs uppercase bg-blue-400 rounded-md"
+              >
+                Max
+              </button>
+            </div>
           </div>
+          <div className="w-full grid grid-cols-4 items-center overflow-visible gap-4">
+            <label className="text-white uppercase text-right">Output</label>
+            <div className="col-span-3 w-full">
+              <input
+                type="number"
+                value={toAmount}
+                onChange={(e) => setToAmount(+e.target.value)}
+                className="w-full rounded-lg border-none py-2 px-3 text-sm leading-5 text-gray-900 focus:ring-0"
+              />
+            </div>
+          </div>
+          <div className="w-full grid grid-cols-4 items-center overflow-visible gap-4">
+            <div></div>
+            <p className="col-span-3 text-sm text-gray-100">
+              {selectedPool
+                ? `Pool address is ${shortenAddress(selectedPool.id)}`
+                : 'Pool not found'}
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={!allowance || waiting || !fromAmount || !toAmount}
+            onClick={() =>
+              allowance?.gte(fromAmountBigNumber ?? 0)
+                ? handleSwap()
+                : handleApprove()
+            }
+            className="disabled:bg-gray-300 bg-green-600 hover:bg-green-700 disabled:hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center disabled:cursor-not-allowed"
+          >
+            <span className="w-full text-center">
+              {fromAmount
+                ? allowance?.gte(fromAmountBigNumber ?? 0)
+                  ? 'Swap'
+                  : 'Approve'
+                : 'Invalid Amount'}
+            </span>
+          </button>
         </div>
-        <div className="w-full grid grid-cols-4 items-center overflow-visible gap-4">
-          <div></div>
-          <p className="col-span-3 text-sm text-gray-100">
-            {selectedPool
-              ? `Pool address is ${shortenAddress(selectedPool.id)}`
-              : 'Pool not found'}
-          </p>
-        </div>
-        <button
-          type="button"
-          disabled={!allowance || waiting || !fromAmount || !toAmount}
-          onClick={() =>
-            allowance?.gte(fromAmountBigNumber) ? handleSwap() : handleApprove()
-          }
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center disabled:cursor-not-allowed"
-        >
-          <span className="w-full text-center">
-            {fromAmount
-              ? allowance?.gte(fromAmountBigNumber)
-                ? 'Swap'
-                : 'Approve'
-              : 'Invalid Amount'}
-          </span>
-        </button>
       </div>
     </div>
   )

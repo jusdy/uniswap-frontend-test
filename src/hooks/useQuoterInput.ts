@@ -8,7 +8,7 @@ export const useQuoterInput = (
   token0: AddressString,
   token1: AddressString,
   fee: string | undefined,
-  amount: BigNumber
+  amount: BigNumber | undefined
 ) => {
   const timerRef = useRef<NodeJS.Timeout>()
   const [expectAmount, setExpectAmount] = useState<BigNumber>()
@@ -20,6 +20,10 @@ export const useQuoterInput = (
   })
 
   useEffect(() => {
+    if (!amount) {
+      return
+    }
+
     if (!quoterContract || !token0 || !token1 || !fee || amount.eq(0)) {
       return
     }

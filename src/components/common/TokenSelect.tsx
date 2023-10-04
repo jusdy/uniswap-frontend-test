@@ -34,7 +34,7 @@ const TokenSelect: FC<Props> = ({ label, onChange }) => {
           <div className="relative mt-1">
             <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
               <Combobox.Input
-                className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+                className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-black focus:ring-0"
                 displayValue={(token: Token) =>
                   `${token.name} (${token.symbol})`
                 }
@@ -43,10 +43,11 @@ const TokenSelect: FC<Props> = ({ label, onChange }) => {
                     setQuery(event.target.value)
                   }
                 }}
+                placeholder="Choose Currency Type"
               />
-              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center px-2 bg-gray-500 bg-opacity-40">
                 <ChevronUpDownIcon
-                  className="h-5 w-5 text-gray-400"
+                  className="h-5 w-5 text-gray-600"
                   aria-hidden="true"
                 />
               </Combobox.Button>
@@ -74,7 +75,7 @@ const TokenSelect: FC<Props> = ({ label, onChange }) => {
                       id={token.id}
                       className={({ active }) =>
                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                          active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                          active ? 'bg-teal-600 text-white' : 'text-black'
                         }`
                       }
                       value={token}

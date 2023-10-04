@@ -9,22 +9,14 @@ const SwapHistory = () => {
   })
 
   return (
-    <div className='lg:h-[calc(100vh-160px)] h-fit lg:overflow-auto overflow-hidden scrollbar'>
-      <table className="border-collapse table-auto flex-1 text-sm hidden lg:block ml-10">
+    <div className="lg:h-[calc(100vh-320px)] h-fit lg:overflow-auto overflow-hidden scrollbar">
+      <table className="border-collapse table-auto flex-1 text-sm hidden lg:block mx-auto max-w-fit">
         <thead>
-          <tr className='text-white text-left text-lg'>
-            <th className="border-b font-medium p-4 pl-8 pt-0 pb-3 ">
-              Date
-            </th>
-            <th className="border-b font-medium p-4 pt-0 pb-3">
-              Input Token
-            </th>
-            <th className="border-b font-medium p-4 pt-0 pb-3">
-              Output Token
-            </th>
-            <th className="border-b font-medium p-4 pt-0 pb-3">
-              Input Amount
-            </th>
+          <tr className="text-white text-left text-lg">
+            <th className="border-b font-medium p-4 pl-8 pt-0 pb-3 ">Date</th>
+            <th className="border-b font-medium p-4 pt-0 pb-3">Input Token</th>
+            <th className="border-b font-medium p-4 pt-0 pb-3">Output Token</th>
+            <th className="border-b font-medium p-4 pt-0 pb-3">Input Amount</th>
             <th className="border-b font-medium p-4 pr-8 pt-0 pb-3">
               Output Amount
             </th>

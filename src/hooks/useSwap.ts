@@ -7,7 +7,7 @@ import { BigNumber } from 'ethers'
 export const useSwap = (
   token0: AddressString,
   token1: AddressString,
-  amount: BigNumber
+  amount: BigNumber | undefined
 ) => {
   const [balance, setBalance] = useState<BigNumber>()
   const [allowance, setAllowance] = useState<BigNumber>()
@@ -27,7 +27,7 @@ export const useSwap = (
   })
 
   const approve = useCallback(async () => {
-    if (!fromTokenContract) {
+    if (!fromTokenContract || !amount) {
       throw Error('Invalid token: from')
     }
 
